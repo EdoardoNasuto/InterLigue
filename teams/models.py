@@ -7,6 +7,10 @@ class Player(models.Model):
     avatar = models.ImageField(null=True, blank=True)
     tracker = models.URLField(null=False, blank=False)
     MMR = models.IntegerField(default=0, null=False, blank=False)
+    goals = models.IntegerField(default=0, null=False, blank=False)
+    saves = models.IntegerField(default=0, null=False, blank=False)
+    assists = models.IntegerField(default=0, null=False, blank=False)
+    shots = models.IntegerField(default=0, null=False, blank=False)
 
 
 class Team(models.Model):
@@ -51,3 +55,61 @@ class Team(models.Model):
         null=True,
         blank=True,
     )
+
+    def get_average_mmr(self):
+        players = [self.player1, self.player2, self.player3, self.player4, self.player5]
+        total_mmr = sum(player.MMR for player in players if player)
+        num_players = sum(1 for player in players if player)
+        return total_mmr / num_players
+
+    def get_total_goals(self):
+        return sum(
+            p.goals
+            for p in [
+                self.player1,
+                self.player2,
+                self.player3,
+                self.player4,
+                self.player5,
+            ]
+            if p
+        )
+
+    def get_total_saves(self):
+        return sum(
+            p.saves
+            for p in [
+                self.player1,
+                self.player2,
+                self.player3,
+                self.player4,
+                self.player5,
+            ]
+            if p
+        )
+
+    def get_total_assists(self):
+        return sum(
+            p.assists
+            for p in [
+                self.player1,
+                self.player2,
+                self.player3,
+                self.player4,
+                self.player5,
+            ]
+            if p
+        )
+
+    def get_total_shots(self):
+        return sum(
+            p.shots
+            for p in [
+                self.player1,
+                self.player2,
+                self.player3,
+                self.player4,
+                self.player5,
+            ]
+            if p
+        )

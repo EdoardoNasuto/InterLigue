@@ -14,6 +14,7 @@ class TeamAdmin(admin.ModelAdmin):
         "player3",
         "player4",
         "player5",
+        "get_average_mmr",
     )
     list_filter = ("league",)
     search_fields = ("name",)
