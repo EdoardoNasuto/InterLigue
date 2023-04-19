@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "authentication",
+    "notifications",
+    "results",
+    "teams",
+    "tournaments",
 ]
 
 MIDDLEWARE = [
@@ -132,3 +136,6 @@ AUTH_USER_MODEL = "authentication.User"
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = LOGIN_URL
+
+MEDIA_ROOT = BASE_DIR.joinpath("media")
+MEDIA_URL = "/media/"
