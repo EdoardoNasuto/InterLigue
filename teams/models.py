@@ -1,9 +1,11 @@
 from django.db import models
+from django.db.models import Q
 from authentication.models import User
+from django.core.exceptions import ValidationError
 
 
 class Player(models.Model):
-    name = models.CharField(max_length=50, null=False, blank=False)
+    name = models.CharField(max_length=50, null=False, blank=False, unique=True)
     avatar = models.ImageField(null=True, blank=True)
     tracker = models.URLField(null=False, blank=False)
     MMR = models.IntegerField(default=0, null=False, blank=False)
@@ -11,6 +13,9 @@ class Player(models.Model):
     saves = models.IntegerField(default=0, null=False, blank=False)
     assists = models.IntegerField(default=0, null=False, blank=False)
     shots = models.IntegerField(default=0, null=False, blank=False)
+
+    def __str__(self):
+        return self.name
 
 
 class Team(models.Model):
@@ -55,6 +60,39 @@ class Team(models.Model):
         null=True,
         blank=True,
     )
+
+    def clean(self):
+        super().clean()
+        players = [self.player1, self.player2, self.player3, self.player4, self.player5]
+
+        # Check that no player appears twice in the team composition
+        seen_players = set()
+        for player in players:
+            if player in seen_players:
+                raise ValidationError(
+                    f"Le joueur {player} apparaît deux fois dans la composition de l'équipe."
+                )
+            elif player:
+                seen_players.add(player)
+
+        # Check that no player appears in the composition of another team
+        for i in range(len(players)):
+            player = getattr(self, f"player{i+1}")
+            if (
+                player
+                and Team.objects.exclude(pk=self.pk)
+                .filter(
+                    Q(player1=player)
+                    | Q(player2=player)
+                    | Q(player3=player)
+                    | Q(player4=player)
+                    | Q(player5=player)
+                )
+                .exists()
+            ):
+                raise ValidationError(
+                    f"Le joueur {player} a déjà une équipe attribuée."
+                )
 
     def get_average_mmr(self):
         players = [self.player1, self.player2, self.player3, self.player4, self.player5]
@@ -113,3 +151,6 @@ class Team(models.Model):
             ]
             if p
         )
+
+    def __str__(self):
+        return self.name
