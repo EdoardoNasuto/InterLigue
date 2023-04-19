@@ -8,6 +8,8 @@ from django.contrib.auth.views import (
 from django.urls import path
 
 import authentication.views
+import tournaments.views
+import teams.views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -35,4 +37,6 @@ urlpatterns = [
     ),
     path("signup/", authentication.views.signup_page, name="signup"),
     path("home/", authentication.views.home, name="home"),
+    path("teams/", teams.views.teams, name="teams"),
+    path("calendar/", tournaments.views.calendar, name="calendar"),
 ]

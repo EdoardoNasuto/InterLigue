@@ -16,35 +16,35 @@ class Team(models.Model):
     league = models.IntegerField(default=1, null=False, blank=False)
     logo = models.ImageField(null=True, blank=True)
     staff = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
-    player1 = models.ForeignKey(
+    player1 = models.OneToOneField(
         Player,
         related_name="team_player1",
         on_delete=models.CASCADE,
         null=False,
         blank=False,
     )
-    player2 = models.ForeignKey(
+    player2 = models.OneToOneField(
         Player,
         related_name="team_player2",
         on_delete=models.CASCADE,
         null=False,
         blank=False,
     )
-    player3 = models.ForeignKey(
+    player3 = models.OneToOneField(
         Player,
         related_name="team_player3",
         on_delete=models.CASCADE,
         null=False,
         blank=False,
     )
-    player4 = models.ForeignKey(
+    player4 = models.OneToOneField(
         Player,
         related_name="team_player4",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
-    player5 = models.ForeignKey(
+    player5 = models.OneToOneField(
         Player,
         related_name="team_player5",
         on_delete=models.CASCADE,
