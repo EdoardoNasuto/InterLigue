@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Teams</h2>
+<h2>Calendar</h2>
 <ul>
     {% for team in matches %}
-    <li>{{ team }}</li>
+    <li>{{ team.0.name }} vs {{ team.1.name }}</li>
     {% endfor %}
 </ul>
 {% endblock content %}
