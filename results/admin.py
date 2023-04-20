@@ -1,3 +1,12 @@
 from django.contrib import admin
+from results.models import *
 
-# Register your models here.
+
+class MatchAdmin(admin.ModelAdmin):
+    list_display = ("team_A", "team_B")
+    list_filter = ("league",)
+    search_fields = []
+    ordering = []
+
+
+admin.site.register(Match, MatchAdmin)

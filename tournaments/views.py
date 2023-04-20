@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from .calendars import calendars
+from results.models import Match
 
 
 def calendar(request):
-    context = {"matches": calendars()}
+    context = {"matches": Match.objects.all()}
     return render(request, "calendar.html", context)

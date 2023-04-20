@@ -3,7 +3,7 @@
 <h2>Calendar</h2>
 <ul>
     {% for team in matches %}
-    <li>{{ team.0.name }} vs {{ team.1.name }}</li>
+    <li>{{ team.team_A }} vs {{ team.team_B }}</li>
     {% endfor %}
 </ul>
 {% endblock content %}

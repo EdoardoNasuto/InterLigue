@@ -7,14 +7,8 @@ from teams.models import Player
 class TeamAdmin(admin.ModelAdmin):
     list_display = (
         "name",
-        "acronym",
-        "league",
-        "player1",
-        "player2",
-        "player3",
-        "player4",
-        "player5",
         "get_average_mmr",
+        "get_total_score",
     )
     list_filter = ("league",)
     search_fields = ("name",)
@@ -22,10 +16,15 @@ class TeamAdmin(admin.ModelAdmin):
 
 
 class PlayerAdmin(admin.ModelAdmin):
-    list_display = ("name", "MMR")
+    list_display = (
+        "name",
+        "MMR",
+        "get_team",
+    )
     list_filter = []
     search_fields = ("name",)
     ordering = ("-MMR",)
+    readonly_fields = ("goals", "saves", "assists", "shots")
 
 
 admin.site.register(Team, TeamAdmin)

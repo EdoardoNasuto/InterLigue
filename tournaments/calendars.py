@@ -2,7 +2,7 @@ from teams.models import Team
 from itertools import combinations
 
 
-def calendars():
+def calendar():
     teams = Team.objects.all()
     team_list = [team for team in teams]
     # Convert queryset to list to be able to use combination

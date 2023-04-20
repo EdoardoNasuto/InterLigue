@@ -14,6 +14,19 @@ class Player(models.Model):
     assists = models.IntegerField(default=0, null=False, blank=False)
     shots = models.IntegerField(default=0, null=False, blank=False)
 
+    def get_team(self):
+        try:
+            team = Team.objects.get(
+                Q(player1=self)
+                | Q(player2=self)
+                | Q(player3=self)
+                | Q(player4=self)
+                | Q(player5=self)
+            )
+            return team
+        except Team.DoesNotExist:
+            return None
+
     def __str__(self):
         return self.name
 
@@ -150,6 +163,24 @@ class Team(models.Model):
                 self.player5,
             ]
             if p
+        )
+
+    def get_total_score(self):
+        from results.models import Match
+        from django.db.models import Sum
+
+        return (
+            Match.objects.filter(Q(team_A=self) | Q(team_B=self))
+            .filter(team_A=self)
+            .aggregate(Sum("team_A_score"))
+            .get("team_A_score__sum")
+            or 0
+        ) + (
+            Match.objects.filter(Q(team_A=self) | Q(team_B=self))
+            .filter(team_B=self)
+            .aggregate(Sum("team_B_score"))
+            .get("team_B_score__sum")
+            or 0
         )
 
     def __str__(self):
