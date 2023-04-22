@@ -2,9 +2,9 @@ from teams.models import Team
 from itertools import combinations
 
 
-def calendar():
-    teams = Team.objects.all()
-    team_list = [team for team in teams]
+def calendar(league):
+    teams = Team.objects.filter(league=league)
+    team_list = list(teams)
     # Convert queryset to list to be able to use combination
     matches = []
     for match in combinations(team_list, 2):
