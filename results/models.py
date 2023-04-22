@@ -7,6 +7,7 @@ from tournaments.calendars import calendar
 
 class Match(models.Model):
     league = models.IntegerField(default=1, null=False, blank=False)
+    date = models.DateField(null=True, blank=True)
     team_A = models.ForeignKey(
         Team, related_name="team_A", on_delete=models.CASCADE, null=False, blank=False
     )
@@ -85,6 +86,66 @@ class Match(models.Model):
         null=True,
         blank=True,
     )
+
+    team_A_player_1_score = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_1_goals = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_1_assists = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_1_saves = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_1_shots = models.IntegerField(default=0, null=False, blank=False)
+
+    team_A_player_2_score = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_2_goals = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_2_assists = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_2_saves = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_2_shots = models.IntegerField(default=0, null=False, blank=False)
+
+    team_A_player_3_score = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_3_goals = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_3_assists = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_3_saves = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_3_shots = models.IntegerField(default=0, null=False, blank=False)
+
+    team_A_player_4_score = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_4_goals = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_4_assists = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_4_saves = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_4_shots = models.IntegerField(default=0, null=False, blank=False)
+
+    team_A_player_5_score = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_5_goals = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_5_assists = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_5_saves = models.IntegerField(default=0, null=False, blank=False)
+    team_A_player_5_shots = models.IntegerField(default=0, null=False, blank=False)
+
+    team_B_player_1_score = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_1_goals = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_1_assists = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_1_saves = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_1_shots = models.IntegerField(default=0, null=False, blank=False)
+
+    team_B_player_2_score = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_2_goals = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_2_assists = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_2_saves = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_2_shots = models.IntegerField(default=0, null=False, blank=False)
+
+    team_B_player_3_score = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_3_goals = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_3_assists = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_3_saves = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_3_shots = models.IntegerField(default=0, null=False, blank=False)
+
+    team_B_player_4_score = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_4_goals = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_4_assists = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_4_saves = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_4_shots = models.IntegerField(default=0, null=False, blank=False)
+
+    team_B_player_5_score = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_5_goals = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_5_assists = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_5_saves = models.IntegerField(default=0, null=False, blank=False)
+    team_B_player_5_shots = models.IntegerField(default=0, null=False, blank=False)
 
     @receiver(post_save, sender=Team)
     def create_matches(sender, **kwargs):

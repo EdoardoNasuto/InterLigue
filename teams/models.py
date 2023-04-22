@@ -9,9 +9,10 @@ class Player(models.Model):
     avatar = models.ImageField(null=True, blank=True)
     tracker = models.URLField(null=False, blank=False)
     MMR = models.IntegerField(default=0, null=False, blank=False)
+    score = models.IntegerField(default=0, null=False, blank=False)
     goals = models.IntegerField(default=0, null=False, blank=False)
-    saves = models.IntegerField(default=0, null=False, blank=False)
     assists = models.IntegerField(default=0, null=False, blank=False)
+    saves = models.IntegerField(default=0, null=False, blank=False)
     shots = models.IntegerField(default=0, null=False, blank=False)
 
     def get_team(self):
