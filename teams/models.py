@@ -28,6 +28,8 @@ class Player(models.Model):
         except Team.DoesNotExist:
             return None
 
+    get_team.short_description = "Team"
+
     def __str__(self):
         return self.name
 
@@ -114,6 +116,8 @@ class Team(models.Model):
         num_players = sum(1 for player in players if player)
         return total_mmr / num_players
 
+    get_average_mmr.short_description = "MMR"
+
     def get_total_goals(self):
         return sum(
             p.goals
@@ -126,6 +130,8 @@ class Team(models.Model):
             ]
             if p
         )
+
+    get_total_goals.short_description = "Goals"
 
     def get_total_saves(self):
         return sum(
@@ -140,6 +146,8 @@ class Team(models.Model):
             if p
         )
 
+    get_total_saves.short_description = "Saves"
+
     def get_total_assists(self):
         return sum(
             p.assists
@@ -153,6 +161,8 @@ class Team(models.Model):
             if p
         )
 
+    get_total_assists.short_description = "Assists"
+
     def get_total_shots(self):
         return sum(
             p.shots
@@ -165,6 +175,8 @@ class Team(models.Model):
             ]
             if p
         )
+
+    get_total_shots.short_description = "Shots"
 
     def get_total_score(self):
         from results.models import Match
@@ -183,6 +195,8 @@ class Team(models.Model):
             .get("team_B_score__sum")
             or 0
         )
+
+    get_total_score.short_description = "score"
 
     def __str__(self):
         return self.name

@@ -4,7 +4,6 @@ from django.dispatch import receiver
 from teams.models import *
 from tournaments.calendars import calendar
 from model_utils import FieldTracker
-from django.db.models import F
 
 
 class Match(models.Model):

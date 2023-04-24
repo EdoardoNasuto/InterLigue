@@ -7,23 +7,33 @@ from teams.models import Player
 class TeamAdmin(admin.ModelAdmin):
     list_display = (
         "name",
+        "league",
         "get_average_mmr",
         "get_total_score",
+        "get_total_goals",
+        "get_total_saves",
+        "get_total_assists",
+        "get_total_shots",
     )
     list_filter = ("league",)
     search_fields = ("name",)
-    ordering = ("name",)
+    ordering = ("name", "league")
 
 
 class PlayerAdmin(admin.ModelAdmin):
     list_display = (
         "name",
-        "MMR",
         "get_team",
+        "MMR",
+        "score",
+        "goals",
+        "saves",
+        "assists",
+        "shots",
     )
     list_filter = []
     search_fields = ("name",)
-    ordering = ("-MMR",)
+    ordering = ("name", "MMR", "score", "goals", "saves", "assists", "shots")
     readonly_fields = ("score", "goals", "saves", "assists", "shots")
 
 
