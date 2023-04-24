@@ -196,7 +196,56 @@ class Team(models.Model):
             or 0
         )
 
-    get_total_score.short_description = "score"
+    get_total_score.short_description = "Score"
+
+    def get_total_wins(self):
+        from results.models import Match
+
+        results = 0
+
+        for match in Match.objects.filter(Q(team_A=self) | Q(team_B=self)):
+            if match.get_team_win() == self:
+                results += 1
+        return results
+
+    get_total_wins.short_description = "Wins"
 
     def __str__(self):
         return self.name
+
+
+"""
+Permet de calculer les statistiques joueurs grace aux méthodes intégrer à la class Player
+
+def get_total_score(self):
+    from results.models import Match
+
+    results = 0
+
+    for match in Match.objects.filter(
+        Q(team_A_player_1=self)
+        | Q(team_A_player_2=self)
+        | Q(team_A_player_3=self)
+        | Q(team_A_player_4=self)
+        | Q(team_A_player_5=self)
+        | Q(team_B_player_1=self)
+        | Q(team_B_player_2=self)
+        | Q(team_B_player_3=self)
+        | Q(team_B_player_4=self)
+        | Q(team_B_player_5=self)
+    ):
+        for player_field in [
+            "team_A_player_1",
+            "team_A_player_2",
+            "team_A_player_3",
+            "team_A_player_4",
+            "team_A_player_5",
+            "team_B_player_1",
+            "team_B_player_2",
+            "team_B_player_3",
+            "team_B_player_4",
+            "team_B_player_5",
+        ]:
+            if getattr(match, player_field) == self:
+                results += getattr(match, (f"{player_field}_score"))
+    return results"""

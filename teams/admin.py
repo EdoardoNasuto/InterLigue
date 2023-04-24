@@ -9,6 +9,7 @@ class TeamAdmin(admin.ModelAdmin):
         "name",
         "league",
         "get_average_mmr",
+        "get_total_wins",
         "get_total_score",
         "get_total_goals",
         "get_total_saves",
