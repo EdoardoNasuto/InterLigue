@@ -24,7 +24,7 @@ class PlayerAdmin(admin.ModelAdmin):
     list_filter = []
     search_fields = ("name",)
     ordering = ("-MMR",)
-    readonly_fields = ("goals", "saves", "assists", "shots")
+    readonly_fields = ("score", "goals", "saves", "assists", "shots")
 
 
 admin.site.register(Team, TeamAdmin)

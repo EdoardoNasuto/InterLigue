@@ -3,6 +3,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from teams.models import *
 from tournaments.calendars import calendar
+from model_utils import FieldTracker
+from django.db.models import F
 
 
 class Match(models.Model):
@@ -147,6 +149,8 @@ class Match(models.Model):
     team_B_player_5_saves = models.IntegerField(default=0, null=False, blank=False)
     team_B_player_5_shots = models.IntegerField(default=0, null=False, blank=False)
 
+    tracker = FieldTracker()
+
     @receiver(post_save, sender=Team)
     def create_matches(sender, **kwargs):
         """
@@ -214,3 +218,65 @@ class Match(models.Model):
         ):
             if match.league != instance.league:
                 match.delete()
+
+    def calculate_player_stats(sender, instance, **kwargs):
+        """
+        Update the statistics of players involved in a match
+        """
+        # Get the changes to the Match object's fields
+        tracker = instance.tracker
+
+        # Loop over the fields corresponding to each player in the match
+        for player_field in [
+            "team_A_player_1",
+            "team_A_player_2",
+            "team_A_player_3",
+            "team_A_player_4",
+            "team_A_player_5",
+            "team_B_player_1",
+            "team_B_player_2",
+            "team_B_player_3",
+            "team_B_player_4",
+            "team_B_player_5",
+        ]:
+            # Get the Player object corresponding to the current player field
+            player = getattr(instance, player_field)
+            if player is not None:
+                player = Player.objects.select_related().get(id=player.id)
+                # Copy the player's current statistics into a dictionary
+                player_stats = {
+                    "score": player.score,
+                    "goals": player.goals,
+                    "assists": player.assists,
+                    "saves": player.saves,
+                    "shots": player.shots,
+                }
+
+                # Check if any of the player's statistics have changed
+                player_changed = False
+                for stat in ["score", "goals", "assists", "saves", "shots"]:
+                    field_name = f"{player_field}_{stat}"
+                    # If stat changed, update with the difference to player's value
+                    if tracker.has_changed(field_name):
+                        player_changed = True
+                        player_stats[stat] += getattr(
+                            instance, field_name
+                        ) - tracker.previous(field_name)
+
+                # Update the player's statistics in the database if they changed
+                if player_changed:
+                    Player.objects.update_or_create(
+                        id=player.id,
+                        defaults={
+                            "score": player_stats["score"],
+                            "goals": player_stats["goals"],
+                            "assists": player_stats["assists"],
+                            "saves": player_stats["saves"],
+                            "shots": player_stats["shots"],
+                        },
+                    )
+
+
+@receiver(post_save, sender=Match)
+def match_post_save(sender, instance, **kwargs):
+    Match.calculate_player_stats(sender, instance, **kwargs)
