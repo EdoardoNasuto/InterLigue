@@ -30,6 +30,55 @@ class Player(models.Model):
 
     get_team.short_description = "Team"
 
+    def set_statistics(self):
+        from results.models import Match
+
+        matches = Match.objects.filter(
+            Q(team_A_player_1=self)
+            | Q(team_A_player_2=self)
+            | Q(team_A_player_3=self)
+            | Q(team_A_player_4=self)
+            | Q(team_A_player_5=self)
+            | Q(team_B_player_1=self)
+            | Q(team_B_player_2=self)
+            | Q(team_B_player_3=self)
+            | Q(team_B_player_4=self)
+            | Q(team_B_player_5=self)
+        )
+
+        player_fields = [
+            "team_A_player_1",
+            "team_A_player_2",
+            "team_A_player_3",
+            "team_A_player_4",
+            "team_A_player_5",
+            "team_B_player_1",
+            "team_B_player_2",
+            "team_B_player_3",
+            "team_B_player_4",
+            "team_B_player_5",
+        ]
+
+        player_stats = {
+            "score": 0,
+            "goals": 0,
+            "assists": 0,
+            "saves": 0,
+            "shots": 0,
+        }
+
+        for match in matches:
+            for player_field in player_fields:
+                player = getattr(match, player_field)
+                if player is not None:
+                    if player.id == self:
+                        for stat in player_stats:
+                            player_stats[stat] += getattr(
+                                match, (f"{player_field}_{stat}")
+                            )
+
+        Player.objects.filter(id=self).update(**player_stats)
+
     def __str__(self):
         return self.name
 
@@ -41,6 +90,14 @@ class Team(models.Model):
     league = models.IntegerField(default=1, null=False, blank=False)
     logo = models.ImageField(null=True, blank=True)
     staff = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
+
+    wins = models.IntegerField(default=0, null=False, blank=False)
+    score = models.IntegerField(default=0, null=False, blank=False)
+    goals = models.IntegerField(default=0, null=False, blank=False)
+    assists = models.IntegerField(default=0, null=False, blank=False)
+    saves = models.IntegerField(default=0, null=False, blank=False)
+    shots = models.IntegerField(default=0, null=False, blank=False)
+
     player1 = models.OneToOneField(
         Player,
         related_name="team_player1",
@@ -118,65 +175,26 @@ class Team(models.Model):
 
     get_average_mmr.short_description = "MMR"
 
-    def get_total_goals(self):
-        return sum(
-            p.goals
-            for p in [
-                self.player1,
-                self.player2,
-                self.player3,
-                self.player4,
-                self.player5,
-            ]
-            if p
-        )
-
-    get_total_goals.short_description = "Goals"
-
-    def get_total_saves(self):
-        return sum(
-            p.saves
-            for p in [
-                self.player1,
-                self.player2,
-                self.player3,
-                self.player4,
-                self.player5,
-            ]
-            if p
-        )
-
-    get_total_saves.short_description = "Saves"
-
-    def get_total_assists(self):
-        return sum(
-            p.assists
-            for p in [
-                self.player1,
-                self.player2,
-                self.player3,
-                self.player4,
-                self.player5,
-            ]
-            if p
-        )
-
-    get_total_assists.short_description = "Assists"
-
-    def get_total_shots(self):
-        return sum(
-            p.shots
-            for p in [
-                self.player1,
-                self.player2,
-                self.player3,
-                self.player4,
-                self.player5,
-            ]
-            if p
-        )
-
-    get_total_shots.short_description = "Shots"
+    def set_statistics(self):
+        stats = {
+            "goals": 0,
+            "saves": 0,
+            "assists": 0,
+            "shots": 0,
+        }
+        for player in [
+            self.player1,
+            self.player2,
+            self.player3,
+            self.player4,
+            self.player5,
+        ]:
+            if player is not None:
+                stats["goals"] += player.goals
+                stats["saves"] += player.saves
+                stats["assists"] += player.assists
+                stats["shots"] += player.shots
+        Team.objects.filter(id=self.id).update(**stats)
 
     def get_total_score(self):
         from results.models import Match
@@ -212,40 +230,3 @@ class Team(models.Model):
 
     def __str__(self):
         return self.name
-
-
-"""
-Permet de calculer les statistiques joueurs grace aux méthodes intégrer à la class Player
-
-def get_total_score(self):
-    from results.models import Match
-
-    results = 0
-
-    for match in Match.objects.filter(
-        Q(team_A_player_1=self)
-        | Q(team_A_player_2=self)
-        | Q(team_A_player_3=self)
-        | Q(team_A_player_4=self)
-        | Q(team_A_player_5=self)
-        | Q(team_B_player_1=self)
-        | Q(team_B_player_2=self)
-        | Q(team_B_player_3=self)
-        | Q(team_B_player_4=self)
-        | Q(team_B_player_5=self)
-    ):
-        for player_field in [
-            "team_A_player_1",
-            "team_A_player_2",
-            "team_A_player_3",
-            "team_A_player_4",
-            "team_A_player_5",
-            "team_B_player_1",
-            "team_B_player_2",
-            "team_B_player_3",
-            "team_B_player_4",
-            "team_B_player_5",
-        ]:
-            if getattr(match, player_field) == self:
-                results += getattr(match, (f"{player_field}_score"))
-    return results"""

@@ -9,16 +9,18 @@ class TeamAdmin(admin.ModelAdmin):
         "name",
         "league",
         "get_average_mmr",
-        "get_total_wins",
         "get_total_score",
-        "get_total_goals",
-        "get_total_saves",
-        "get_total_assists",
-        "get_total_shots",
+        "get_total_wins",
+        "score",
+        "goals",
+        "saves",
+        "assists",
+        "shots",
     )
     list_filter = ("league",)
     search_fields = ("name",)
-    ordering = ("name", "league")
+    ordering = ("name", "score", "league", "goals", "saves", "assists", "shots")
+    readonly_fields = ("goals", "saves", "assists", "shots")
 
 
 class PlayerAdmin(admin.ModelAdmin):
