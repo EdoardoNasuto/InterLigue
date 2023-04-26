@@ -37,6 +37,7 @@ urlpatterns = [
     ),
     path("signup/", authentication.views.signup_page, name="signup"),
     path("home/", authentication.views.home, name="home"),
+    path("rules/", tournaments.views.rules, name="rules"),
     path("teams/", teams.views.teams, name="teams"),
     path("calendar/", tournaments.views.calendar, name="calendar"),
 ]
