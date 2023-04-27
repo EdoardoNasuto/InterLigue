@@ -2,12 +2,13 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from teams.models import *
-from tournaments.calendars import calendar
+from tournaments.calendars import *
 
 
 class Match(models.Model):
     league = models.IntegerField(default=1, null=False, blank=False)
     date = models.DateField(null=True, blank=True)
+    week = models.IntegerField(null=True, blank=True)
     team_A = models.ForeignKey(
         Team, related_name="team_A", on_delete=models.CASCADE, null=False, blank=False
     )
@@ -150,8 +151,10 @@ class Match(models.Model):
     def get_team_win(self):
         if self.team_A_score > self.team_B_score:
             return self.team_A
-        if self.team_A_score > self.team_B_score:
+        elif self.team_A_score < self.team_B_score:
             return self.team_B
+        else:
+            return None
 
     def calculate_player_stats(sender, instance, **kwargs):
         """
@@ -177,6 +180,7 @@ class Match(models.Model):
                     Player.set_statistics(player.id)
             team = getattr(instance, teams)
             Team.set_statistics(team)
+            Team.set_teams_stats(team)
 
     @receiver(post_save, sender=Team)
     def create_matches(sender, **kwargs):

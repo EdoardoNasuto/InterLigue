@@ -91,7 +91,13 @@ class Team(models.Model):
     logo = models.ImageField(null=True, blank=True)
     staff = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
 
+    matches_played = models.IntegerField(default=0, null=False, blank=False)
     wins = models.IntegerField(default=0, null=False, blank=False)
+    lose = models.IntegerField(default=0, null=False, blank=False)
+    bo_wins = models.IntegerField(default=0, null=False, blank=False)
+    bo_lose = models.IntegerField(default=0, null=False, blank=False)
+    bo_diff = models.IntegerField(default=0, null=False, blank=False)
+
     score = models.IntegerField(default=0, null=False, blank=False)
     goals = models.IntegerField(default=0, null=False, blank=False)
     assists = models.IntegerField(default=0, null=False, blank=False)
@@ -176,12 +182,16 @@ class Team(models.Model):
     get_average_mmr.short_description = "MMR"
 
     def set_statistics(self):
+        # Initialize dictionary with all keys initialized to 0
         stats = {
+            "score": 0,
             "goals": 0,
             "saves": 0,
             "assists": 0,
             "shots": 0,
         }
+
+        # Iterate through the team's players and add up their stats
         for player in [
             self.player1,
             self.player2,
@@ -190,43 +200,54 @@ class Team(models.Model):
             self.player5,
         ]:
             if player is not None:
+                stats["score"] += player.score
                 stats["goals"] += player.goals
                 stats["saves"] += player.saves
                 stats["assists"] += player.assists
                 stats["shots"] += player.shots
+
+        # Update the team's stats in the database
         Team.objects.filter(id=self.id).update(**stats)
 
-    def get_total_score(self):
-        from results.models import Match
-        from django.db.models import Sum
-
-        return (
-            Match.objects.filter(Q(team_A=self) | Q(team_B=self))
-            .filter(team_A=self)
-            .aggregate(Sum("team_A_score"))
-            .get("team_A_score__sum")
-            or 0
-        ) + (
-            Match.objects.filter(Q(team_A=self) | Q(team_B=self))
-            .filter(team_B=self)
-            .aggregate(Sum("team_B_score"))
-            .get("team_B_score__sum")
-            or 0
-        )
-
-    get_total_score.short_description = "Score"
-
-    def get_total_wins(self):
+    def set_teams_stats(self):
         from results.models import Match
 
-        results = 0
+        # Initialize dictionary with all keys initialized to 0
+        stats = {
+            "wins": 0,
+            "lose": 0,
+            "bo_wins": 0,
+            "bo_lose": 0,
+            "bo_diff": 0,
+            "matches_played": 0,
+        }
 
+        # Iterate through all matches the team has played
         for match in Match.objects.filter(Q(team_A=self) | Q(team_B=self)):
-            if match.get_team_win() == self:
-                results += 1
-        return results
+            # Add up the BO wins and losses for the team
+            stats["bo_wins"] += (
+                match.team_A_score if match.team_A == self else match.team_B_score
+            )
+            stats["bo_lose"] += (
+                match.team_B_score if match.team_A == self else match.team_A_score
+            )
 
-    get_total_wins.short_description = "Wins"
+            # Determine if the team won or lost the match
+            team_win = match.get_team_win()
+            print(team_win)
+            if team_win:
+                print("yes")
+                if team_win == self:
+                    stats["wins"] += 1
+                else:
+                    stats["lose"] += 1
+
+        # Calculate the BO difference and matches played for the team
+        stats["bo_diff"] = stats["bo_wins"] - stats["bo_lose"]
+        stats["matches_played"] = stats["wins"] + stats["lose"]
+
+        # Update the team's stats in the database
+        Team.objects.filter(id=self.id).update(**stats)
 
     def __str__(self):
         return self.name

@@ -18,6 +18,5 @@ def signup_page(request):
     return render(request, "authentication/signup.html", context={"form": form})
 
 
-@login_required
 def home(request):
     return render(request, "authentication/home.html")

@@ -3,7 +3,7 @@ from results.models import Match
 
 
 def calendar(request):
-    context = {"matches": Match.objects.all()}
+    context = {"matches": Match.objects.order_by("week")}
     return render(request, "calendar.html", context)
 
 

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-dark" style="height: 50px;"></div>
+{% for league in teams_by_league %}
+<section class="py-5 bg-dark text-white">
+    <div class="container">
+        <h3 class="text-center mb-4">LIGUE {{ league.league }}</h3>
+        <table class="table table-bordered">
+            <thead class="text-white" style="background-color: #000000;">
+                <tr>
+                    <th scope="col" class="col-1 text-center">POS</th>
+                    <th scope="col" class="text-center">NOM</th>
+                    <th scope="col" class="col-1 text-center">J</th>
+                    <th scope="col" class="col-1 text-center">V</th>
+                    <th scope="col" class="col-1 text-center">D</th>
+                    <th scope="col" class="col-1 text-center">DIFF</th>
+                    <th scope="col" class="col-1 text-center">BO_G</th>
+                    <th scope="col" class="col-1 text-center">BO_P</th>
+                </tr>
+            </thead>
+            <tbody class="bg-light ">
+                {% for team in league.teams %}
+
+
+                {% if league.league == 1 %}
+                {% if forloop.counter == 6 %}
+                <tr class="table-warning">
+                    {% elif forloop.counter >= 7 %}
+                <tr class="table-danger">
+                    {% else %}
+                <tr>
+                    {% endif %}
+                    {% endif %}
+
+
+                    {% if league.league == 2 %}
+                    {% if 2 >= forloop.counter %}
+                <tr class="table-success">
+                    {% elif forloop.counter == 5 %}
+                <tr class="table-warning">
+                    {% elif forloop.counter >= 6 %}
+                <tr class="table-danger">
+                    {% else %}
+                <tr>
+                    {% endif %}
+                    {% endif %}
+
+
+                    {% if league.league == 3 %}
+                    {% if 2 >= forloop.counter %}
+                <tr class="table-success">
+                    {% elif forloop.counter == 6 %}
+                <tr class="table-warning">
+                    {% elif forloop.counter >= 7 %}
+                <tr class="table-danger">
+                    {% else %}
+                <tr>
+                    {% endif %}
+                    {% endif %}
+
+
+                    {% if league.league == 4 %}
+                    {% if 3 >= forloop.counter %}
+                <tr class="table-warning">
+                    {% else %}
+                <tr>
+                    {% endif %}
+                    {% endif %}
+
+
+                    <td class="text-center">{{ forloop.counter }}</td>
+                    <td class="text-center">{{ team.name }}</td>
+                    <td class="text-center">{{ team.matches_played }}</td>
+                    <td class="text-center">{{ team.wins }}</td>
+                    <td class="text-center">{{ team.lose }}</td>
+                    <td class="text-center">{{ team.bo_diff }}</td>
+                    <td class="text-center">{{ team.bo_wins }}</td>
+                    <td class="text-center">{{ team.bo_lose }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endfor %}
+{% endblock content %}
