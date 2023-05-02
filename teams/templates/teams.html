@@ -5,22 +5,30 @@
 <section class="py-5 bg-dark text-white">
     <div class="container">
         <h3 class="text-center mb-4">EQUIPES</h3>
-        <table class="table table-sm">
-            <thead class="text-white" style="background-color: #000000;">
-                <tr>
-                    <th scope="col" class="text-center">NOM</th>
-                    <th scope="col" class="col-1 text-center">LIGUE</th>
-                </tr>
-            </thead>
-            <tbody class="bg-light ">
-                {% for team in teams %}
-                <tr>
-                    <td class="text-center">{{ team.name }}</td>
-                    <td class="text-center">{{ team.league }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive overflow-auto">
+            <table class="table table-sm">
+                <thead class="text-white" style="background-color: #000000;">
+                    <tr>
+                        <th scope="col" class="col-1 text-center">LIGUE</th>
+                        <th scope="col" class="text-center">NOM</th>
+                        <th scope="col" class="col-6 text-center" colspan="5">JOUEURS</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-light ">
+                    {% for team in teams %}
+                    <tr>
+                        <td class="text-center">{{ team.league }}</td>
+                        <td class="text-center">{{ team.name }}</td>
+                        <td class="text-center">{{ team.player1 }}</td>
+                        <td class="text-center">{{ team.player2 }}</td>
+                        <td class="text-center">{{ team.player3 }}</td>
+                        <td class="text-center">{{ team.player4 }}</td>
+                        <td class="text-center">{{ team.player5 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </section>
 {% endblock content %}
