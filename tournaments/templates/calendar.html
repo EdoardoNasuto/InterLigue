@@ -2,35 +2,39 @@
 
 {% block content %}
 <div class="bg-dark" style="height: 50px;"></div>
+{% for league in matches %}
 <section class="py-5 bg-dark text-white">
     <div class="container">
-        <h3 class="text-center mb-4">CALENDRIER</h3>
+        <h3 class="text-center mb-4">LIGUE {{ league.league }}</h3>
         <div class="table-responsive overflow-auto">
             <table class="table table-sm">
                 <thead class="text-white" style="background-color: #000000;">
                     <tr>
                         <th scope="col" class="col-1 text-center">SEMAINE</th>
                         <th scope="col" class="col-1 text-center">DATE</th>
-                        <th scope="col" class="text-center">EQUIPE</th>
-                        <th scope="col" class="col-1 text-center">-</th>
-                        <th scope="col" class="text-center">EQUIPE</th>
-                        <th scope="col" class="col-1 text-center">LIGUE</th>
+                        <th scope="col" class="col text-center" colspan="3">EQUIPES</th>
+                        <th scope="col" class="col-1 text-center" colspan="3">SCORE</th>
                     </tr>
                 </thead>
                 <tbody class="bg-light ">
-                    {% for match in matches %}
+                    {% for match in league.match %}
+                    {% if match.league == 2 %}
                     <tr>
                         <td class="text-center">{{ match.week }}</td>
                         <td class="text-center">{{ match.date }}</td>
                         <td class="text-center">{{ match.team_A }}</td>
-                        <td class="text-center">VS</td>
+                        <td class="col-1 text-center">VS</td>
                         <td class="text-center">{{ match.team_B }}</td>
-                        <td class="text-center">{{ match.league }}</td>
+                        <td class="text-center">{{ match.team_A_score }}</td>
+                        <td class="text-center">-</td>
+                        <td class="text-center">{{ match.team_B_score }}</td>
                     </tr>
+                    {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
 </section>
+{% endfor %}
 {% endblock content %}

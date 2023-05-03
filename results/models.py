@@ -156,6 +156,12 @@ class Match(models.Model):
         else:
             return None
 
+    def get_match_play(self):
+        if self.team_A_score and self.team_B_score == 0:
+            return False
+        else:
+            return True
+
     def calculate_player_stats(sender, instance, **kwargs):
         """
         Update the statistics of players involved in a match

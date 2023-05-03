@@ -3,7 +3,16 @@ from results.models import Match
 
 
 def calendar(request):
-    context = {"matches": Match.objects.order_by("week")}
+    leagues = (
+        Match.objects.order_by("league").values_list("league", flat=True).distinct()
+    )
+    matches = []
+    for league in leagues:
+        match = Match.objects.filter(league=league).order_by("week")
+        matches.append({"league": league, "match": match})
+    context = {
+        "matches": matches,
+    }
     return render(request, "calendar.html", context)
 
 
