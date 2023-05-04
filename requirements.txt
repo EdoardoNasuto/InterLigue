@@ -1,3 +1,4 @@
 Django==3.2.8
 Pillow==8.2.0
-python-environ=0.4.54
+python-environ==0.4.54
+django-jazzmin==2.6.0
