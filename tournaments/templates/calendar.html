@@ -18,7 +18,7 @@
                 </thead>
                 <tbody class="bg-light ">
                     {% for match in league.match %}
-                    {% if match.league == 2 %}
+                    {% if match.league == league.league %}
                     <tr>
                         <td class="text-center">{{ match.week }}</td>
                         <td class="text-center">{{ match.date }}</td>

@@ -3,7 +3,7 @@ from results.models import *
 
 
 class MatchAdmin(admin.ModelAdmin):
-    list_display = ("team_A", "team_B", "league", "week")
+    list_display = ("week", "date", "team_A", "team_B", "league")
     list_filter = ("league",)
     search_fields = []
     ordering = ("week",)
@@ -12,6 +12,7 @@ class MatchAdmin(admin.ModelAdmin):
             "Match information",
             {
                 "fields": (
+                    "week",
                     "date",
                     "league",
                     "team_A",

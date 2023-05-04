@@ -18,16 +18,8 @@ class TeamAdmin(admin.ModelAdmin):
     )
     list_filter = ("league",)
     search_fields = ("name",)
-    ordering = (
-        "name",
-        "matches_played",
-        "wins",
-        "bo_wins",
-        "bo_lose",
-        "bo_diff",
-        "matches_played",
-    )
     readonly_fields = (
+        "matches_played",
         "wins",
         "lose",
         "bo_wins",
@@ -38,6 +30,44 @@ class TeamAdmin(admin.ModelAdmin):
         "saves",
         "assists",
         "shots",
+    )
+    fieldsets = (
+        (
+            "Informations",
+            {
+                "fields": (
+                    "name",
+                    "number",
+                    "acronym",
+                    "league",
+                    "logo",
+                    "staff",
+                    "player1",
+                    "player2",
+                    "player3",
+                    "player4",
+                    "player5",
+                ),
+            },
+        ),
+        (
+            "Statistiques",
+            {
+                "fields": (
+                    "matches_played",
+                    "wins",
+                    "lose",
+                    "bo_wins",
+                    "bo_lose",
+                    "bo_diff",
+                    "score",
+                    "goals",
+                    "saves",
+                    "assists",
+                    "shots",
+                ),
+            },
+        ),
     )
 
 
