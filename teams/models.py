@@ -234,9 +234,7 @@ class Team(models.Model):
 
             # Determine if the team won or lost the match
             team_win = match.get_team_win()
-            print(team_win)
             if team_win:
-                print("yes")
                 if team_win == self:
                     stats["wins"] += 1
                 else:

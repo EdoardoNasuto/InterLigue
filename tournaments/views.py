@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from results.models import Match
+from django.db.models import F
 
 
 def calendar(request):
@@ -8,7 +9,9 @@ def calendar(request):
     )
     matches = []
     for league in leagues:
-        match = Match.objects.filter(league=league).order_by("week")
+        match = Match.objects.filter(league=league).order_by(
+            F("week").asc(nulls_last=True)
+        )
         matches.append({"league": league, "match": match})
     context = {
         "matches": matches,
