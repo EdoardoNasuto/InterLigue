@@ -6,9 +6,7 @@ from django.core.exceptions import ValidationError
 
 class Player(models.Model):
     name = models.CharField(max_length=50, null=False, blank=False, unique=True)
-    avatar = models.ImageField(null=True, blank=True)
     tracker = models.URLField(null=False, blank=False)
-    MMR = models.IntegerField(default=0, null=False, blank=False)
     score = models.IntegerField(default=0, null=False, blank=False)
     goals = models.IntegerField(default=0, null=False, blank=False)
     assists = models.IntegerField(default=0, null=False, blank=False)
@@ -16,6 +14,13 @@ class Player(models.Model):
     shots = models.IntegerField(default=0, null=False, blank=False)
 
     def get_team(self):
+        """
+        Returns the team the player belongs to.
+
+        Returns:
+            Team: The team the player belongs to, or None if the player does not belong to any team.
+        """
+
         try:
             team = Team.objects.get(
                 Q(player1=self)
@@ -31,8 +36,21 @@ class Player(models.Model):
     get_team.short_description = "Team"
 
     def set_statistics(self):
+        """
+        Computes and updates the player's statistics based on the matches they played.
+
+        The statistics that are computed are:
+        - score
+        - goals
+        - assists
+        - saves
+        - shots
+        """
+
+        # Import the Match model from the results app
         from results.models import Match
 
+        # Retrieve all the matches in which the player has participated
         matches = Match.objects.filter(
             Q(team_A_player_1=self)
             | Q(team_A_player_2=self)
@@ -46,6 +64,7 @@ class Player(models.Model):
             | Q(team_B_player_5=self)
         )
 
+        # Define a list of player fields for each team in a match
         player_fields = [
             "team_A_player_1",
             "team_A_player_2",
@@ -59,6 +78,7 @@ class Player(models.Model):
             "team_B_player_5",
         ]
 
+        # Initialize a dictionary to store the player's statistics
         player_stats = {
             "score": 0,
             "goals": 0,
@@ -67,16 +87,19 @@ class Player(models.Model):
             "shots": 0,
         }
 
+        # Iterate over each match in which the player participated
         for match in matches:
+            # Iterate over each player field in a match
             for player_field in player_fields:
+                # Retrieve the player from the player field
                 player = getattr(match, player_field)
-                if player is not None:
-                    if player.id == self:
-                        for stat in player_stats:
-                            player_stats[stat] += getattr(
-                                match, (f"{player_field}_{stat}")
-                            )
+                # Check if the player exists and is the same as the current player
+                if player is not None and player.id == self:
+                    # Iterate over each statistic and add it to the player's stats dictionary
+                    for stat in player_stats:
+                        player_stats[stat] += getattr(match, (f"{player_field}_{stat}"))
 
+        # Update the player's stats in the database
         Player.objects.filter(id=self).update(**player_stats)
 
     def __str__(self):
@@ -88,7 +111,6 @@ class Team(models.Model):
     number = models.IntegerField(default=1, null=False, blank=False)
     acronym = models.CharField(max_length=4, null=False, blank=False)
     league = models.IntegerField(default=1, null=False, blank=False)
-    logo = models.ImageField(null=True, blank=True)
     staff = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
 
     matches_played = models.IntegerField(default=0, null=False, blank=False)
@@ -141,7 +163,18 @@ class Team(models.Model):
     )
 
     def clean(self):
+        """
+        Validates the team composition to ensure that it meets the necessary criteria.
+
+        Raises a ValidationError if any of the following conditions are met:
+            - a player appears twice in the team composition
+            - a player is already part of another team's composition
+        """
+
+        # Call the parent class's clean method to ensure that it gets run
         super().clean()
+
+        # Make a list of all the players in the team
         players = [self.player1, self.player2, self.player3, self.player4, self.player5]
 
         # Check that no player appears twice in the team composition
@@ -173,15 +206,18 @@ class Team(models.Model):
                     f"Le joueur {player} a déjà une équipe attribuée."
                 )
 
-    def get_average_mmr(self):
-        players = [self.player1, self.player2, self.player3, self.player4, self.player5]
-        total_mmr = sum(player.MMR for player in players if player)
-        num_players = sum(1 for player in players if player)
-        return total_mmr / num_players
-
-    get_average_mmr.short_description = "MMR"
-
     def set_statistics(self):
+        """
+        Computes and updates the statistics of a team based on the statistics of its players.
+
+        The following statistics are computed:
+        - score: the total score of the team
+        - goals: the total number of goals scored by the team
+        - saves: the total number of saves made by the team
+        - assists: the total number of assists made by the team
+        - shots: the total number of shots made by the team
+        """
+
         # Initialize dictionary with all keys initialized to 0
         stats = {
             "score": 0,
@@ -210,6 +246,19 @@ class Team(models.Model):
         Team.objects.filter(id=self.id).update(**stats)
 
     def set_teams_stats(self):
+        """
+        Calculates and updates various statistics for the team based on past matches.
+
+        The following statistics are computed:
+        - wins: the number of matches won
+        - lose: the number of matches lost
+        - bo_wins: the number of Best-of (BO) wins
+        - bo_lose: the number of BO losses
+        - bo_diff: the BO difference (BO wins minus BO losses)
+        - matches_played: the total number of matches played
+        """
+
+        # Import the Match model from the results app
         from results.models import Match
 
         # Initialize dictionary with all keys initialized to 0

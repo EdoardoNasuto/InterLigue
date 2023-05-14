@@ -20,14 +20,16 @@
                     {% for match in league.match %}
                     {% if match.league == league.league %}
                     <tr>
-                        <td class="text-center">{{ match.week }}</td>
-                        <td class="text-center">{{ match.date }}</td>
+                        <td class="text-center">{% if match.week %} {{ match.week }} {% else %} - {% endif %}</td>
+                        <td class="text-center">{% if match.date %} {{ match.date }} {% else %} - {% endif %}</td>
                         <td class="text-center">{{ match.team_A }}</td>
                         <td class="col-1 text-center">VS</td>
                         <td class="text-center">{{ match.team_B }}</td>
-                        <td class="text-center">{{ match.team_A_score }}</td>
-                        <td class="text-center">-</td>
-                        <td class="text-center">{{ match.team_B_score }}</td>
+                        <td class="text-center">{% if match.get_match_play %} {{ match.team_A_score }} {% else %} o
+                            {% endif %}</td>
+                        <td class="text-center"> - </td>
+                        <td class="text-center">{% if match.get_match_play %} {{ match.team_B_score }} {% else %} o
+                            {% endif %}</td>
                     </tr>
                     {% endif %}
                     {% endfor %}

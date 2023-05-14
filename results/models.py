@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from teams.models import *
-from tournaments.calendars import *
+from results.calendars import *
 
 
 class Match(models.Model):
@@ -149,6 +149,13 @@ class Match(models.Model):
     team_B_player_5_shots = models.IntegerField(default=0, null=False, blank=False)
 
     def get_team_win(self):
+        """
+        Returns the winning team of the match or None if there is a tie.
+
+        Returns:
+            Team: The winning team or None if there is a tie.
+        """
+
         if self.team_A_score > self.team_B_score:
             return self.team_A
         elif self.team_A_score < self.team_B_score:
@@ -157,7 +164,14 @@ class Match(models.Model):
             return None
 
     def get_match_play(self):
-        if self.team_A_score and self.team_B_score == 0:
+        """
+        Returns a boolean indicating whether the match has been played.
+
+        Returns:
+            bool: True if the match has been played, False otherwise.
+        """
+
+        if self.team_A_score == 0 and self.team_B_score == 0:
             return False
         else:
             return True
@@ -165,7 +179,13 @@ class Match(models.Model):
     def calculate_player_stats(sender, instance, **kwargs):
         """
         Update the statistics of players involved in a match
+
+        Args:
+            sender (Model): The model class of the sender.
+            instance (Model): The actual instance being saved.
+            **kwargs (dict): Optional keyword arguments.
         """
+
         # Loop over the fields corresponding to each team in the match
         for teams in [
             "team_A",
@@ -191,8 +211,13 @@ class Match(models.Model):
     @receiver(post_save, sender=Team)
     def create_matches(sender, **kwargs):
         """
-        Create matches for a newly created team or one that has changed leagues
+        Create matches for a newly created team or one that has changed leagues.
+
+        Args:
+            sender (Model): The model class of the sender.
+            **kwargs: Optional keyword arguments.
         """
+
         match_objs = []
         # Get a list of all unique leagues
         for league in Team.objects.values_list("league", flat=True).distinct():
@@ -225,8 +250,14 @@ class Match(models.Model):
     @receiver(post_save, sender=Team)
     def update_matches(sender, instance, **kwargs):
         """
-        Update existing matches when a team is updated
+        Update the player information for all matches involving a team when a team is updated.
+
+        Args:
+            sender (Model): The model class of the sender.
+            instance (Model): The actual instance being saved.
+            **kwargs: Optional keyword arguments.
         """
+
         # Update all matches involving the updated team
         for match in Match.objects.filter(team_A=instance) | Match.objects.filter(
             team_B=instance
@@ -247,8 +278,14 @@ class Match(models.Model):
     @receiver(post_save, sender=Team)
     def delete_matches(sender, instance, **kwargs):
         """
-        Delete matches involving a team when it is deleted or has changed leagues
+        Delete all matches involving a team when it is deleted or has changed leagues.
+
+        Args:
+            sender (Model): The model class of the sender.
+            instance (Model): The actual instance being saved.
+            **kwargs: Optional keyword arguments.
         """
+
         # Find all matches that involve the deleted team
         for match in Match.objects.filter(team_A=instance) | Match.objects.filter(
             team_B=instance
@@ -279,7 +316,6 @@ class Match(models.Model):
                             "saves": player.saves,
                             "shots": player.shots,
                         }
-
                         # Loop over the statistics and update the player's stats
                         for stat in player_stats:
                             field_name = f"{player_field}_{stat}"
@@ -295,4 +331,13 @@ class Match(models.Model):
 
 @receiver(post_save, sender=Match)
 def match_post_save(sender, instance, **kwargs):
+    """
+    Signal receiver function that is called whenever a Match object is saved.
+
+    Args:
+        sender: The model class that is sending the signal (Match).
+        instance: The actual instance of the Match model that was saved.
+        **kwargs: Additional keyword arguments passed to the signal receiver.
+    """
+
     Match.calculate_player_stats(sender, instance, **kwargs)

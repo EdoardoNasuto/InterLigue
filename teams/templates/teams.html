@@ -22,8 +22,8 @@
                         <td class="text-center">{{ team.player1 }}</td>
                         <td class="text-center">{{ team.player2 }}</td>
                         <td class="text-center">{{ team.player3 }}</td>
-                        <td class="text-center">{{ team.player4 }}</td>
-                        <td class="text-center">{{ team.player5 }}</td>
+                        <td class="text-center">{% if team.player4 %} {{ team.player4 }} {% else %} - {% endif %}</td>
+                        <td class="text-center">{% if team.player5 %} {{ team.player5 }} {% else %} - {% endif %}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

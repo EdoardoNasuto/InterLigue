@@ -42,10 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "authentication",
-    "notifications",
     "results",
     "teams",
-    "tournaments",
 ]
 
 MIDDLEWARE = [

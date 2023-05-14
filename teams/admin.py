@@ -5,10 +5,20 @@ from teams.models import Player
 
 
 class TeamAdmin(admin.ModelAdmin):
+    """
+    Admin configuration for the `Team` model in the Django Admin interface.
+
+    Args:
+        list_display (tuple): The fields to display in the list view of `Team` objects.
+        list_filter (tuple): The fields to use for filtering the list view of `Team` objects.
+        search_fields (tuple): The fields to use for searching `Team` objects.
+        readonly_fields (tuple): The fields that should be displayed as read-only in the detail view of `Team` objects.
+        fieldsets (tuple): The sections and fields to display in the detail view of `Team` objects.
+    """
+
     list_display = (
         "name",
         "league",
-        "get_average_mmr",
         "matches_played",
         "wins",
         "lose",
@@ -40,7 +50,6 @@ class TeamAdmin(admin.ModelAdmin):
                     "number",
                     "acronym",
                     "league",
-                    "logo",
                     "staff",
                     "player1",
                     "player2",
@@ -72,10 +81,20 @@ class TeamAdmin(admin.ModelAdmin):
 
 
 class PlayerAdmin(admin.ModelAdmin):
+    """
+    Admin configuration for the `Player` model in the Django Admin interface.
+
+    Args:
+        list_display (tuple): The fields to display in the list view of `Player` objects.
+        list_filter (tuple): The fields to use for filtering the list view of `Player` objects.
+        search_fields (tuple): The fields to use for searching `Player` objects.
+        ordering (tuple): The fields to use for ordering `Player` objects.
+        readonly_fields (tuple): The fields that should be displayed as read-only in the detail view of `Player` objects.
+    """
+
     list_display = (
         "name",
         "get_team",
-        "MMR",
         "score",
         "goals",
         "saves",
@@ -84,7 +103,7 @@ class PlayerAdmin(admin.ModelAdmin):
     )
     list_filter = []
     search_fields = ("name",)
-    ordering = ("name", "MMR", "score", "goals", "saves", "assists", "shots")
+    ordering = ("name", "score", "goals", "saves", "assists", "shots")
     readonly_fields = ("score", "goals", "saves", "assists", "shots")
 
 

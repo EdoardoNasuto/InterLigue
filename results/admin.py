@@ -3,6 +3,18 @@ from results.models import *
 
 
 class MatchAdmin(admin.ModelAdmin):
+    """
+    Admin interface for managing Match instances.
+
+    Args:
+        list_display (tuple): The fields to display in the list view.
+        list_filter (tuple): The fields to filter by in the list view.
+        search_fields (tuple): The fields to search by in the list view.
+        ordering (tuple): The fields to order by in the list view.
+        fieldsets (tuple): The fields to display in the detail view and how they are grouped.
+        readonly_fields (tuple): The fields that are read-only in the detail view.
+    """
+
     list_display = ("week", "date", "team_A", "team_B", "league")
     list_filter = ("league",)
     search_fields = []
@@ -190,7 +202,10 @@ class MatchAdmin(admin.ModelAdmin):
         return False
 
     def has_delete_permission(self, request, obj=None):
-        return False
+        if request.user.is_superuser:
+            return True
+        else:
+            return False
 
 
 admin.site.register(Match, MatchAdmin)
