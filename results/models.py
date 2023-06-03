@@ -9,6 +9,7 @@ class Match(models.Model):
     league = models.IntegerField(default=1, null=False, blank=False)
     date = models.DateField(null=True, blank=True)
     week = models.IntegerField(null=True, blank=True)
+    split = models.IntegerField(default=1, null=False, blank=False)
     team_A = models.ForeignKey(
         Team, related_name="team_A", on_delete=models.CASCADE, null=False, blank=False
     )
@@ -225,10 +226,14 @@ class Match(models.Model):
             matches = calendar(league)
             for team_a, team_b in matches:
                 # Check if a match already exists with these teams
-                if not Match.objects.filter(team_A=team_a, team_B=team_b).exists():
+                if (
+                    not Match.objects.filter(team_A=team_a, team_B=team_b).exists()
+                    and team_a.split == team_b.split
+                ):
                     # Create a new match object
                     match_objs.append(
                         Match(
+                            split=team_a.split,
                             league=team_a.league,
                             team_A=team_a,
                             team_B=team_b,

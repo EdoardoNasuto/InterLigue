@@ -16,7 +16,7 @@ class MatchAdmin(admin.ModelAdmin):
     """
 
     list_display = ("week", "date", "team_A", "team_B", "league")
-    list_filter = ("league",)
+    list_filter = ("split", "league")
     search_fields = []
     ordering = ("week",)
     fieldsets = (
@@ -24,11 +24,10 @@ class MatchAdmin(admin.ModelAdmin):
             "Match information",
             {
                 "fields": (
+                    "league",
                     "week",
                     "date",
-                    "league",
-                    "team_A",
-                    "team_B",
+                    "split",
                 ),
             },
         ),
@@ -36,7 +35,9 @@ class MatchAdmin(admin.ModelAdmin):
             "Results",
             {
                 "fields": (
+                    "team_A",
                     "team_A_score",
+                    "team_B",
                     "team_B_score",
                 ),
             },
@@ -183,6 +184,7 @@ class MatchAdmin(admin.ModelAdmin):
         ),
     )
     readonly_fields = (
+        "split",
         "league",
         "team_A",
         "team_B",

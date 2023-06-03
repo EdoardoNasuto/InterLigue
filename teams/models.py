@@ -5,7 +5,8 @@ from django.core.exceptions import ValidationError
 
 
 class Player(models.Model):
-    name = models.CharField(max_length=50, null=False, blank=False, unique=True)
+    name = models.CharField(max_length=50, null=False, blank=False)
+    split = models.IntegerField(default=1, null=False, blank=False)
     tracker = models.URLField(null=False, blank=False)
     score = models.IntegerField(default=0, null=False, blank=False)
     goals = models.IntegerField(default=0, null=False, blank=False)
@@ -110,6 +111,7 @@ class Team(models.Model):
     name = models.CharField(max_length=50, null=False, blank=False)
     number = models.IntegerField(default=1, null=False, blank=False)
     acronym = models.CharField(max_length=4, null=False, blank=False)
+    split = models.IntegerField(default=1, null=False, blank=False)
     league = models.IntegerField(default=1, null=False, blank=False)
     staff = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
 

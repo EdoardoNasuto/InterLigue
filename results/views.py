@@ -2,6 +2,7 @@ from django.shortcuts import render
 from results.models import Match
 from results.models import Team
 from django.db.models import F
+from interligue import settings
 
 
 def standings(request):
@@ -16,7 +17,12 @@ def standings(request):
     """
 
     # Get a list of all distinct leagues in the database
-    leagues = Team.objects.values_list("league", flat=True).distinct()
+    leagues = (
+        Team.objects.values_list("league", flat=True)
+        .order_by("league")
+        .filter(split=settings.split)
+        .distinct()
+    )
 
     # Create an empty list to store the teams in each league
     teams_by_league = []
@@ -24,7 +30,7 @@ def standings(request):
     # Loop through each league and get a queryset of all teams in that league,
     # sorted by various criteria
     for league in leagues:
-        teams = Team.objects.filter(league=league).order_by(
+        teams = Team.objects.filter(league=league, split=settings.split).order_by(
             "-wins", "lose", "-bo_diff", "-bo_wins", "bo_lose"
         )
         # Add the league name and the teams in that league to the list of teams by league
@@ -48,13 +54,16 @@ def calendar(request):
 
     # Get a list of all the distinct leagues in the database
     leagues = (
-        Match.objects.order_by("league").values_list("league", flat=True).distinct()
+        Match.objects.order_by("league")
+        .values_list("league", flat=True)
+        .filter(split=settings.split)
+        .distinct()
     )
 
     # Group all the matches by league and order them by week, ignoring null values
     matches = []
     for league in leagues:
-        match = Match.objects.filter(league=league).order_by(
+        match = Match.objects.filter(league=league, split=settings.split).order_by(
             F("week").asc(nulls_last=True), F("date").asc(nulls_last=True)
         )
         matches.append({"league": league, "match": match})

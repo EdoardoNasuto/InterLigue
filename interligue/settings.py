@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "authentication",
     "results",
     "teams",
+    "configuration",
 ]
 
 MIDDLEWARE = [
@@ -192,3 +193,5 @@ JAZZMIN_UI_TWEAKS = {
     },
     "actions_sticky_top": False,
 }
+
+split = 1

@@ -26,7 +26,7 @@ class TeamAdmin(admin.ModelAdmin):
         "bo_lose",
         "bo_diff",
     )
-    list_filter = ("league",)
+    list_filter = ("split", "league")
     search_fields = ("name",)
     readonly_fields = (
         "matches_played",
@@ -49,6 +49,7 @@ class TeamAdmin(admin.ModelAdmin):
                     "name",
                     "number",
                     "acronym",
+                    "split",
                     "league",
                     "staff",
                     "player1",
@@ -101,7 +102,7 @@ class PlayerAdmin(admin.ModelAdmin):
         "assists",
         "shots",
     )
-    list_filter = []
+    list_filter = ("split",)
     search_fields = ("name",)
     ordering = ("name", "score", "goals", "saves", "assists", "shots")
     readonly_fields = ("score", "goals", "saves", "assists", "shots")

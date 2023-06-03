@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from teams.models import Team
+from interligue import settings
 
 
 def teams(request):
@@ -14,7 +15,7 @@ def teams(request):
     """
 
     # Retrieve all teams from the database
-    teams = Team.objects.all().order_by("name")
+    teams = Team.objects.all().order_by("name").filter(split=settings.split)
 
     # Create a context dictionary containing the teams
     context = {"teams": teams}
